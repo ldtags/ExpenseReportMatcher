@@ -313,7 +313,7 @@ def main():
                 if float(amount) == rb_expense.amount:
                     similarity = calculate_similarity(description.lower(), rb_expense.description.lower())
                     if similarity >= SIMILARITY_TOLERANCE:
-                        print(f'Possible match {(similarity * 100):.4f}%: {description} (${amount}) {rb_expense}')
+                        print(f'Possible match ({(similarity * 100):.4f}%):\n{description} (${amount}) {rb_expense}')
 
             try:
                 expense = expenses[rb_key]
