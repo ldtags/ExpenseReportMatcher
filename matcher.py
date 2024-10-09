@@ -5,6 +5,8 @@ import openpyxl as xl
 from difflib import SequenceMatcher
 from openpyxl.cell import Cell
 
+from arg_types import MONTH_NUMBER
+
 
 DRIVE = 'C:\\Users'
 USER = 'ltags'
@@ -20,14 +22,6 @@ EXPENSE_REPORT_SHEET_NAME = 'Expense Report'
 SIMILARITY_TOLERANCE = 0
 
 
-def valid_month_num(arg: str) -> int:
-    month = int(arg)
-    if month >= 0 and month <= 12:
-        return month
-
-    raise ValueError(f'Invalid month: {arg}')
-
-
 def parse_args() -> ap.Namespace:
     parser = ap.ArgumentParser()
 
@@ -39,7 +33,7 @@ def parse_args() -> ap.Namespace:
 
     parser.add_argument(
         '-m', '--month',
-        type=valid_month_num,
+        type=MONTH_NUMBER,
         default=dt.date.today().month
     )
 
