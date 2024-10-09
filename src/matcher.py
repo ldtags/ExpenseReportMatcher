@@ -1,11 +1,8 @@
 import os
 import datetime as dt
-import argparse as ap
 import openpyxl as xl
 from difflib import SequenceMatcher
 from openpyxl.cell import Cell
-
-from arg_types import MONTH_NUMBER
 
 
 DRIVE = 'C:\\Users'
@@ -16,28 +13,8 @@ EXPENSE_TOOL_PATH = os.path.join(
     USER,
     *os.path.split(PATH)
 )
-MONTH_RB_LIMIT = 3
-USAGE_STR = 'Usage: ./main -e [--employee] <str> [-m [--month] <int>]'
 EXPENSE_REPORT_SHEET_NAME = 'Expense Report'
 SIMILARITY_TOLERANCE = 0
-
-
-def parse_args() -> ap.Namespace:
-    parser = ap.ArgumentParser()
-
-    parser.add_argument(
-        '-e', '--employee',
-        type=str,
-        required=True
-    )
-
-    parser.add_argument(
-        '-m', '--month',
-        type=MONTH_NUMBER,
-        default=dt.date.today().month
-    )
-
-    return parser.parse_args()
 
 
 class Expense:
@@ -238,16 +215,7 @@ def get_expense_report(month: int, employee: str) -> str | None:
     return report_name
 
 
-def main():
-    args = parse_args()
-    employee = getattr(args, 'employee', None)
-    if not isinstance(employee, str):
-        raise RuntimeError(USAGE_STR)
-
-    month = getattr(args, 'month', None)
-    if not isinstance(month, int):
-        raise RuntimeError(USAGE_STR)
-
+def match_expenses(employee: str, month: int, runback: int):
     try:
         report_name = get_expense_report(month, employee)
     except FileNotFoundError as err:
@@ -274,7 +242,7 @@ def main():
         expenses[f'{row[2].value};;;;{float(row[5].value):.2f}'] = None
 
     # compare previous expenses with current expenses to find matches
-    for i in range(1, MONTH_RB_LIMIT + 1):
+    for i in range(1, runback + 1):
         rb_month = month - i
         rb_month_name = dt.date(1900, rb_month, 1).strftime('%b')
         try:
@@ -323,7 +291,3 @@ def main():
             elif expenses[rb_key] != rb_expense:
                 print(f'Expense conflict found at row {i} in {rb_report_name}')
                 continue
-
-
-if __name__ == '__main__':
-    main()
