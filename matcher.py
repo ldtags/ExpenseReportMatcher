@@ -16,7 +16,7 @@ EXPENSE_TOOL_PATH = os.path.join(
     USER,
     *os.path.split(PATH)
 )
-MONTH_RB_LIMIT = 1
+MONTH_RB_LIMIT = 3
 USAGE_STR = 'Usage: ./main -e [--employee] <str> [-m [--month] <int>]'
 EXPENSE_REPORT_SHEET_NAME = 'Expense Report'
 SIMILARITY_TOLERANCE = 0
@@ -70,6 +70,8 @@ class Expense:
                 self.billable = True
             case 'Non-Billable':
                 self.billable = False
+            case None:
+                self.billable = None
             case other:
                 raise RuntimeError(f'Invalid billable type: {other}')
 
@@ -78,6 +80,8 @@ class Expense:
                 self.reimbursable = True
             case 'Non-Reimbursable':
                 self.reimbursable = False
+            case None:
+                self.reimbursable = None
             case other:
                 raise RuntimeError(f'Invalid reimbursable type: {other}')
 
@@ -106,7 +110,7 @@ class Expense:
             '|',
             'Memo'.ljust(50),
             '|',
-            'Type'.ljust(18),
+            'Type'.ljust(25),
             '|',
             'Client'.ljust(10),
             '|',
@@ -132,7 +136,7 @@ class Expense:
             '|',
             (self.memo or '').ljust(50),
             '|',
-            self.expense_type.ljust(18),
+            self.expense_type.ljust(25),
             '|',
             self.client.ljust(10),
             '|',
